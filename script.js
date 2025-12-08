@@ -24,7 +24,8 @@ const COLORS = [
     '#F538FF', // L
     '#FF8E0D', // J
     '#FFE138', // S
-    '#3877FF'  // Z
+    '#3877FF',  // Z
+    '#000000'  // BOMB
 ];
 
 const PIECES = [
@@ -34,7 +35,8 @@ const PIECES = [
     [[0, 0, 4], [4, 4, 4], [0, 0, 0]], // L
     [[5, 0, 0], [5, 5, 5], [0, 0, 0]], // J
     [[0, 6, 6], [6, 6, 0], [0, 0, 0]], // S
-    [[7, 7, 0], [0, 7, 7], [0, 0, 0]]  // Z
+    [[7, 7, 0], [0, 7, 7], [0, 0, 0]],  // Z
+    [[8]] // BOMB
 ];
 
 // 게임 상태 변수
@@ -310,8 +312,27 @@ async function dropPiece() {
     }
 }
 
+function detonateBomb(x, y) {
+    score += 500; // 폭탄 점수 추가
+    for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+            const newX = x + j;
+            const newY = y + i;
+            if (newX >= 0 && newX < COLS && newY >= 0 && newY < ROWS) {
+                grid[newY][newX] = 0;
+            }
+        }
+    }
+}
+
+
 async function landPiece() {
-    lockPiece();
+    // BOMB
+    if (currentPiece.matrix[0][0] === 8) {
+        detonateBomb(currentPiece.x, currentPiece.y);
+    } else {
+        lockPiece();
+    }
     await clearLines();
     currentPiece = nextPiece;
     nextPiece = createNewPiece();
