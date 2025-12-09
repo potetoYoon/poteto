@@ -25,7 +25,7 @@ const COLORS = [
     '#FF8E0D', // J
     '#FFE138', // S
     '#3877FF',  // Z
-    '#000000'  // BOMB
+    '#808080'  // BOMB
 ];
 
 const PIECES = [
