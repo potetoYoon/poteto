@@ -379,7 +379,7 @@ function startGame() {
     dropInterval = BASE_DROP_INTERVAL;
     startPauseButton.textContent = '게임 멈춤';
     gameStarted = true;
-    isPaused = false;
+    isPaused = false; 
     isAnimating = false;
     lastTime = performance.now();
     
