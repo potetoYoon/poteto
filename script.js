@@ -6,6 +6,7 @@ const nextPieceContext = nextPieceCanvas.getContext('2d');
 const scoreElement = document.getElementById('score');
 const levelElement = document.getElementById('level');
 const startPauseButton = document.getElementById('start-pause-button');
+const scoreRankingsElement = document.getElementById('score-rankings'); // Add this line
 
 // 게임 상수 정의
 const COLS = 10;
@@ -14,6 +15,11 @@ const BLOCK_SIZE = 30;
 const NEXT_PIECE_COLS = 4;
 const NEXT_PIECE_ROWS = 4;
 const BASE_DROP_INTERVAL = 1000;
+
+// 점수 관리 상수
+const MAX_SCORES = 10;
+const LOCAL_STORAGE_KEY = 'tetrisHighScores';
+
 
 // 테트로미노 모양과 색상 정의
 const COLORS = [
@@ -281,6 +287,7 @@ function gameLoop(time = 0) {
         startPauseButton.disabled = false;
         startPauseButton.textContent = "다시 시작";
         gameStarted = false;
+        saveScore(score); // 게임 오버 시 점수 저장
         return;
     }
 
@@ -384,6 +391,7 @@ function startGame() {
     lastTime = performance.now();
     
     gameLoop();
+    displayScores();
 }
 
 function togglePause() {
@@ -410,6 +418,54 @@ startPauseButton.addEventListener('click', () => {
 function init() {
      context.clearRect(0, 0, board.width, board.height);
      nextPieceContext.clearRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
+}
+
+// 초기 화면
+function init() {
+     context.clearRect(0, 0, board.width, board.height);
+     nextPieceContext.clearRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
+     displayScores(); // 초기화 시 점수표 표시
+}
+
+// 점수 불러오기
+function loadScores() {
+    const scoresJson = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return scoresJson ? JSON.parse(scoresJson) : [];
+}
+
+// 점수 저장 및 관리
+function saveScore(newScore) {
+    let scores = loadScores();
+    scores.push({ score: newScore, date: new Date().toISOString() });
+    scores.sort((a, b) => b.score - a.score); // 내림차순 정렬
+    scores = scores.slice(0, MAX_SCORES); // 최대 10개 유지
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(scores));
+    displayScores();
+}
+
+// 점수 순위표 표시
+function displayScores() {
+    const scores = loadScores();
+    let scoreHtml = '<h2>점수 순위</h2>';
+    if (scores.length === 0) {
+        scoreHtml += '<p>아직 기록된 점수가 없습니다.</p>';
+    } else {
+        scoreHtml += '<table>';
+        scoreHtml += '<thead><tr><th>순위</th><th>점수</th><th>날짜</th></tr></thead>';
+        scoreHtml += '<tbody>';
+        scores.forEach((s, index) => {
+            const date = new Date(s.date).toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            scoreHtml += `<tr><td>${index + 1}</td><td>${s.score}</td><td>${date}</td></tr>`;
+        });
+        scoreHtml += '</tbody></table>';
+    }
+    scoreRankingsElement.innerHTML = scoreHtml;
 }
 
 init();
