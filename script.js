@@ -1,4 +1,4 @@
-// DOM 요소 가져오기
+// DOM 요소 가져오기 
 const board = document.getElementById('tetris-board');
 const context = board.getContext('2d');
 const nextPieceCanvas = document.getElementById('next-piece');
