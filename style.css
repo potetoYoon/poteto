@@ -46,10 +46,18 @@ h1 {
     margin-bottom: 10px;
 }
 
-#score, #level {
+#score {
     font-size: 2rem;
     font-weight: bold;
-    color: #ffc107;
+    color: blue; /* 점수 색상을 파란색으로 변경 */
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+#level {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffc107; /* 레벨 색상은 기존 유지 */
     margin-top: 0;
     margin-bottom: 30px;
 }
