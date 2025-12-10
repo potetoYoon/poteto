@@ -370,6 +370,38 @@ document.addEventListener('keydown', event => {
     }
 });
 
+// 가상 키패드 이벤트 처리
+document.getElementById('keypad-rotate').addEventListener('click', () => {
+    if (gameOver || isPaused || isAnimating) return;
+    rotate();
+});
+document.getElementById('keypad-left').addEventListener('click', () => {
+    if (gameOver || isPaused || isAnimating) return;
+    if (isValidMove(currentPiece.matrix, currentPiece.x - 1, currentPiece.y)) {
+        currentPiece.x--;
+    }
+});
+document.getElementById('keypad-right').addEventListener('click', () => {
+    if (gameOver || isPaused || isAnimating) return;
+    if (isValidMove(currentPiece.matrix, currentPiece.x + 1, currentPiece.y)) {
+        currentPiece.x++;
+    }
+});
+document.getElementById('keypad-down').addEventListener('click', () => {
+    if (gameOver || isPaused || isAnimating) return;
+    dropPiece();
+});
+document.getElementById('keypad-hard-drop').addEventListener('click', () => {
+    if (gameOver || isPaused || isAnimating) return;
+    hardDrop();
+});
+document.getElementById('keypad-pause').addEventListener('click', () => {
+    // 키패드 일시정지 버튼은 게임이 시작된 후에만 작동
+    if (gameStarted) {
+        togglePause();
+    }
+});
+
 // 게임 시작 함수
 function startGame() {
     if (animationFrameId) {
@@ -385,6 +417,7 @@ function startGame() {
     gameOver = false;
     dropInterval = BASE_DROP_INTERVAL;
     startPauseButton.textContent = '게임 멈춤';
+    document.getElementById('keypad-pause').textContent = '일시 정지'; // 키패드 버튼 텍스트 초기화
     gameStarted = true;
     isPaused = false; 
     isAnimating = false;
@@ -397,6 +430,7 @@ function startGame() {
 function togglePause() {
     isPaused = !isPaused;
     startPauseButton.textContent = isPaused ? '게임 시작' : '게임 멈춤';
+    document.getElementById('keypad-pause').textContent = isPaused ? '재개' : '일시 정지'; // 키패드 버튼 텍스트 업데이트
     if (!isPaused) {
         lastTime = performance.now();
         gameLoop();
@@ -413,12 +447,6 @@ startPauseButton.addEventListener('click', () => {
         togglePause();
     }
 });
-
-// 초기 화면
-function init() {
-     context.clearRect(0, 0, board.width, board.height);
-     nextPieceContext.clearRect(0, 0, nextPieceCanvas.width, nextPieceCanvas.height);
-}
 
 // 초기 화면
 function init() {
